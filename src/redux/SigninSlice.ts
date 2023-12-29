@@ -2,8 +2,6 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { authenticate } from '../services/authentication';
 import { setTokens } from '../services/localStorage';
 import { RootState } from './store';
-import { history } from '../helpers/history';
-
 
 export interface IAuthentication {
   isProcessingRequest: boolean;
@@ -46,14 +44,15 @@ export const authenticationSlice = createSlice({
     },
   },
 });
-export const authenticateUser = (userData: UserPayload) => async (dispatch: any) => {
+export const authenticateUser = (userData: UserPayload) => async (dispatch: (arg0: { payload: any; type: "authentication/success" | "authentication/error"; }) => void) => {
+
   try {
     const authData = await authenticate(
      userData
     );
     setTokens(authData.data);
     dispatch(success(authData.data));
-    history.push('/v1');
+    
   } catch (err: any) {
     dispatch(error(err));
   }

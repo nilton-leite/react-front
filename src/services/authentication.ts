@@ -13,6 +13,7 @@ interface ReturnAuthenticate {
 }
 
 export const authenticate = async (data: AuthPayload): Promise<ReturnAuthenticate> => {
+  console.log('AQUIIIIII')
   let rest:ReturnAuthenticate = { status: false , data: "Something went wrong"};
     await axios.get(`https://api-challenge.free.beeceptor.com/auth`).then(function (response) {
       rest = { status: true, data: response.data}

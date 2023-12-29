@@ -6,6 +6,8 @@ interface Props {
   variant: 'text' | 'outlined' | 'contained';
   text: string
   fullWidth: boolean
+  // handleSubmit: () => void
+  
 }
 const ButtonSubmit = ({ fullWidth,variant,text, ...props }: Props) => {
   return (

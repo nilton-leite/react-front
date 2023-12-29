@@ -1,62 +1,42 @@
-import * as React from 'react';
-import Avatar from '@mui/material/Avatar';
-import CssBaseline from '@mui/material/CssBaseline';
-import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useAppDispatch } from '../../redux/hooks';
-import { authenticateUser } from '../../redux/SigninSlice';
-import Copyright from '../molecules/Copyright';
+
+import ContainerSignin from '../templates/container-signin';
 import { ButtonSubmit } from '../atoms/Buttons';
 import  TextFields  from '../atoms/TextFields';
-import TypographyComponent from '../atoms/Typography';
-import AvatarComponent from '../molecules/Avatar';
+import { useAppDispatch } from '../../redux/hooks';
+import { authenticateUser } from '../../redux/SigninSlice';
+import { useNavigate } from 'react-router-dom';
+import { useForm, FormProvider, useFormContext, FieldValues } from "react-hook-form";
 
-// TODO remove, this demo shouldn't need to reset the theme.
+
 const defaultTheme = createTheme();
 
 export default function SignIn() {
 
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
+  const methods = useForm({mode: 'all'});
+
+  const onSubmit = (data: FieldValues) => {
     if (data) {
-        const username: string = String(data.get('email'))
-        const password: string = String(data.get('password'))
         const userPayload = {
-            username: username,
-            password:  password
+            username: data.email,
+            password:  data.password
         }
         dispatch(authenticateUser(userPayload));
+        navigate("/dash")
     }
-  };
-
+  }
+  
   return (
     <ThemeProvider theme={defaultTheme}>
-      <Container component="main" maxWidth="xs">
-        <CssBaseline />
-        <Box
-          sx={{
-            marginTop: 8,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
-        >
-          <AvatarComponent icon={<LockOutlinedIcon />}/>       
-          {/* <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-            <LockOutlinedIcon />
-          </Avatar> */}
-
-          <TypographyComponent variant="header" text='Sign in'/>
-         
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-
-            <TextFields  
+      <ContainerSignin>
+      <FormProvider {...methods} > 
+        <form onSubmit={methods.handleSubmit(onSubmit)}>
+          <TextFields
                 margin="normal"
+                labelRegister="email"
                 required
                 fullWidth
                 id="email"
@@ -66,10 +46,11 @@ export default function SignIn() {
                 autoComplete="email"
                 autoFocus={true}/>
 
-            <TextFields  
+            <TextFields
               margin="normal"
               required
               fullWidth
+              labelRegister="password"
               name="password"
               label="Password"
               id="password"
@@ -79,10 +60,9 @@ export default function SignIn() {
               />
             
             <ButtonSubmit text='Sign In' fullWidth={true} variant='contained'/>
-          </Box>
-        </Box>
-        <Copyright textLink='Nilton Amaral' link='https://www.delliv.me/' text='Challenge delliv' />
-      </Container>
+        </form>
+        </FormProvider>
+      </ContainerSignin>
     </ThemeProvider>
   );
 }
